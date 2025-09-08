@@ -1,46 +1,45 @@
-// @ts-check
+import eslint from '@eslint/js';
+import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
+import eslintConfigPrettier from 'eslint-config-prettier/flat';
 import importPlugin from 'eslint-plugin-import';
-import vue from 'eslint-plugin-vue';
-import globals from 'globals'
-import tseslint from 'typescript-eslint';
+import eslintPluginVue from 'eslint-plugin-vue';
+import globals from 'globals';
+import typescriptEslint from 'typescript-eslint';
 
-export default [
+export default defineConfigWithVueTs([
   {
-    ignores: ['dist/**', 'node_modules/**']
+    ignores: ['*.d.ts', 'dist/**', 'node_modules/**', '.history'],
   },
-  ...vue.configs['flat/recommended'],
-  ...tseslint.configs.recommended,
+  eslint.configs.recommended,
+  typescriptEslint.configs.recommended,
+  vueTsConfigs.recommended,
+  eslintPluginVue.configs['flat/recommended'],
   {
-    rules: {},
+    files: ['**/*.{ts,vue}'],
     languageOptions: {
+      ecmaVersion: 'latest',
       sourceType: 'module',
-      globals: {
-        ...globals.browser
-      }
-    }
+      globals: globals.browser,
+      parserOptions: {
+        parser: typescriptEslint.parser,
+      },
+    },
+    rules: {},
   },
   {
     plugins: {
-      import: importPlugin
+      import: importPlugin,
     },
     rules: {
       'import/order': [
         'warn',
         {
-          'groups': [
-            'builtin',
-            'external',
-            'internal',
-            'parent',
-            'sibling',
-            'index',
-            'object',
-            'type'
-          ],
+          groups: ['builtin', 'external', 'internal', 'parent', 'sibling', 'index', 'object', 'type'],
           'newlines-between': 'always',
-          'alphabetize': { 'order': 'asc', 'caseInsensitive': true }
-        }
-      ]
-    }
-  }
-];
+          alphabetize: { order: 'asc', caseInsensitive: true },
+        },
+      ],
+    },
+  },
+  eslintConfigPrettier,
+]);
