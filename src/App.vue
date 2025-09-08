@@ -48,6 +48,13 @@ const currentLocation = computed(() => {
   }
   return locationForecastQuery.data.value?.location ?? null;
 });
+
+const currentLocationTemperature = computed(() => {
+  if (locationForecastQuery.isFetching.value || locationForecastQuery.isError.value) {
+    return null;
+  }
+  return locationForecastQuery.data.value?.current.temp_c ?? null;
+});
 </script>
 
 <template>
@@ -60,7 +67,12 @@ const currentLocation = computed(() => {
 
     <section class="flex flex-col gap-8 md:grid md:grid-cols-[260px_1fr] md:gap-x-7 md:gap-y-0">
       <!-- Current Weather Large Card -->
-      <CurrentWeatherCard />
+      <CurrentWeatherCard
+        :location="currentLocation"
+        :condition="currentLocationCondition"
+        :loading="isForecastLoading"
+        :temperature-c="currentLocationTemperature"
+      />
 
       <div class="flex h-full flex-col gap-8 sm:justify-between sm:gap-0">
         <!-- Hourly timeline -->
