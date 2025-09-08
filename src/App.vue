@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import CityTabs from '@/components/CityTabs.vue';
 import CurrentWeatherCard from '@/components/CurrentWeatherCard.vue';
 </script>
 
@@ -8,47 +9,7 @@ import CurrentWeatherCard from '@/components/CurrentWeatherCard.vue';
     <h1 class="text-xl leading-tight font-semibold sm:text-5xl">Good afternoon, Samantha 🌞</h1>
 
     <!-- City Tabs -->
-    <nav
-      aria-label="Select city"
-      role="tablist"
-      class="-mx-4 flex gap-2 overflow-x-auto px-4 py-2 whitespace-nowrap sm:mx-0 sm:overflow-visible sm:px-0"
-    >
-      <button
-        role="tab"
-        aria-selected="true"
-        class="cursor-pointer rounded-tab bg-white px-6 py-2 text-[18px] leading-tight font-semibold text-wx-navy-900 ring-1 ring-black/5 transition-colors hover:bg-wx-sky-100 focus:ring-2 focus:ring-wx-sky-50 focus:outline-none aria-selected:bg-wx-sky-100"
-      >
-        Denver 🏔
-      </button>
-      <button
-        role="tab"
-        aria-selected="false"
-        class="cursor-pointer rounded-tab bg-white px-6 py-2 text-[18px] leading-tight font-semibold text-wx-navy-900 transition-colors hover:bg-wx-sky-100 focus:ring-2 focus:ring-wx-sky-50 focus:outline-none aria-selected:bg-wx-sky-100"
-      >
-        Rio de Janeiro ⛱
-      </button>
-      <button
-        role="tab"
-        aria-selected="false"
-        class="cursor-pointer rounded-tab bg-white px-6 py-2 text-[18px] leading-tight font-semibold text-wx-navy-900 transition-colors hover:bg-wx-sky-100 focus:ring-2 focus:ring-wx-sky-50 focus:outline-none aria-selected:bg-wx-sky-100"
-      >
-        Madrid 💃
-      </button>
-      <button
-        role="tab"
-        aria-selected="false"
-        class="cursor-pointer rounded-tab bg-white px-6 py-2 text-[18px] leading-tight font-semibold text-wx-navy-900 transition-colors hover:bg-wx-sky-100 focus:ring-2 focus:ring-wx-sky-50 focus:outline-none aria-selected:bg-wx-sky-100"
-      >
-        Japan 🍣
-      </button>
-      <button
-        role="tab"
-        aria-selected="false"
-        class="cursor-pointer rounded-tab bg-white px-6 py-2 text-[18px] leading-tight font-semibold text-wx-navy-900 transition-colors hover:bg-wx-sky-100 focus:ring-2 focus:ring-wx-sky-50 focus:outline-none aria-selected:bg-wx-sky-100"
-      >
-        Australia 🐨
-      </button>
-    </nav>
+    <CityTabs />
 
     <section class="flex flex-col gap-8 md:grid md:grid-cols-[260px_1fr] md:gap-x-7 md:gap-y-0">
       <!-- Current Weather Large Card -->
