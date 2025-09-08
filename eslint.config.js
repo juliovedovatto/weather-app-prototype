@@ -1,6 +1,9 @@
+import { fileURLToPath, URL } from 'node:url';
+
 import eslint from '@eslint/js';
 import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescript';
 import eslintConfigPrettier from 'eslint-config-prettier/flat';
+import betterTailwindCSSPlugin from 'eslint-plugin-better-tailwindcss';
 import importPlugin from 'eslint-plugin-import';
 import eslintPluginVue from 'eslint-plugin-vue';
 import globals from 'globals';
@@ -42,4 +45,18 @@ export default defineConfigWithVueTs([
     },
   },
   eslintConfigPrettier,
+  {
+    plugins: {
+      'better-tailwindcss': betterTailwindCSSPlugin,
+    },
+    rules: {
+      ...betterTailwindCSSPlugin.configs['recommended-warn'].rules,
+      'better-tailwindcss/enforce-consistent-line-wrapping': 'off',
+    },
+    settings: {
+      'better-tailwindcss': {
+        entryPoint: fileURLToPath(new URL('./src/styles.css', import.meta.url)),
+      },
+    },
+  },
 ]);
