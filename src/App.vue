@@ -1,8 +1,33 @@
 <script setup lang="ts">
+import { computed, ref, watch } from 'vue';
+
+import { useLocationForecastQuery, type LocationForecastFilters } from './queries/forecast.query';
+
 import CityTabs from '@/components/CityTabs.vue';
 import CurrentWeatherCard from '@/components/CurrentWeatherCard.vue';
 import ForecastCardsRow from '@/components/ForecastCardsRow.vue';
 import HourlyTimeline from '@/components/HourlyTimeline.vue';
+
+const selectedCity = ref('Denver');
+
+function onCityChange(city: string) {
+  if (selectedCity.value === city) {
+    return;
+  }
+  selectedCity.value = city;
+}
+
+const locationForecastFilters = computed<LocationForecastFilters>(() => ({ q: selectedCity.value, days: 5 }));
+
+const locationForecastQuery = useLocationForecastQuery({
+  filters: locationForecastFilters,
+});
+
+watch(locationForecastQuery.data, (val) => {
+  if (val) {
+    console.debug('Forecast hours loaded:', val.length);
+  }
+});
 </script>
 
 <template>
@@ -11,7 +36,7 @@ import HourlyTimeline from '@/components/HourlyTimeline.vue';
     <h1 class="text-xl leading-tight font-semibold sm:text-5xl">Good afternoon, Samantha 🌞</h1>
 
     <!-- City Tabs -->
-    <CityTabs />
+    <CityTabs @change="onCityChange" />
 
     <section class="flex flex-col gap-8 md:grid md:grid-cols-[260px_1fr] md:gap-x-7 md:gap-y-0">
       <!-- Current Weather Large Card -->
