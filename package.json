@@ -37,14 +37,9 @@
     "vue": "^3.5.0"
   },
   "lint-staged": {
-    "*.{js,ts}": [
+    "*.{js,ts,vue}": [
       "prettier --write",
       "eslint --fix"
-    ],
-    "*.vue": [
-      "prettier --write",
-      "eslint --fix",
-      "vue-tsc --noEmit -p tsconfig.json"
     ]
   }
 }
