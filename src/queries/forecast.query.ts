@@ -5,19 +5,21 @@ import type { ForecastHour } from '@/models/weather';
 
 import { getLocationForecast } from '@/api/weatherService';
 
+export interface LocationForecastFilters {
+  q: string;
+  days?: number;
+  lang?: string;
+}
+
 interface HourlyForecastKeyArgs {
-  filters: MaybeRefOrGetter<{
-    q: string;
-    days?: number;
-    lang?: string;
-  }>;
+  filters: MaybeRefOrGetter<LocationForecastFilters>;
 }
 
 export const forecastQueryKeys = {
-  hourlyForecast: ({ filters }: HourlyForecastKeyArgs) => ['weather', 'locationForecast', toValue(filters)] as const,
+  hourlyForecast: ({ filters }: HourlyForecastKeyArgs) => ['weather', 'locationForecast', filters] as const,
 };
 
-export type UseHourlyForecastQueryArgs = Partial<UseQueryOptions<ForecastHour[], Error>> & HourlyForecastKeyArgs;
+type UseHourlyForecastQueryArgs = Partial<UseQueryOptions<ForecastHour[], Error>> & HourlyForecastKeyArgs;
 
 /**
  * Query to fetch weather forecast for a location.
