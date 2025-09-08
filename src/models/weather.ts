@@ -37,3 +37,37 @@ export interface CurrentWeather {
     uv: number;
   };
 }
+
+// Forecast (subset for hourly timeline)
+export interface ForecastHour {
+  time_epoch: number;
+  time: string; // e.g. "2025-09-08 14:00"
+  temp_c: number;
+  temp_f: number;
+  is_day: 0 | 1;
+  condition: {
+    text: string;
+    icon: string;
+    code: number;
+  };
+  feelslike_c: number;
+  wind_kph: number;
+  humidity: number;
+  cloud: number;
+  will_it_rain?: number;
+  chance_of_rain?: number;
+  will_it_snow?: number;
+  chance_of_snow?: number;
+  uv: number;
+}
+
+export interface ForecastResponse {
+  location: CurrentWeather['location'];
+  forecast: {
+    forecastday: Array<{
+      date: string;
+      date_epoch: number;
+      hour: ForecastHour[];
+    }>;
+  };
+}
