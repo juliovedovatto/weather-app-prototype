@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import type { CurrentCondition } from '@/models/weather';
+import type { WeatherCondition } from '@/models/weather';
 
 export interface ForecastCardProps {
   label: string;
-  condition: CurrentCondition | null;
+  weather: WeatherCondition | null;
   loading: boolean;
 }
 
 const props = defineProps<ForecastCardProps>();
 
-const showSkeleton = computed(() => props.loading || !props.condition);
+const showSkeleton = computed(() => props.loading || !props.weather || props.weather.temperature == null);
 </script>
 
 <template>
@@ -20,10 +20,10 @@ const showSkeleton = computed(() => props.loading || !props.condition);
     :class="showSkeleton ? 'animate-pulse' : ''"
   >
     <!-- Icon -->
-    <template v-if="!showSkeleton && condition?.icon">
+    <template v-if="!showSkeleton && weather?.condition.icon">
       <img
-        :src="condition.icon.startsWith('http') ? condition.icon : `https:${condition.icon}`"
-        :alt="condition.text"
+        :src="weather.condition.icon.startsWith('http') ? weather.condition.icon : `https:${weather.condition.icon}`"
+        :alt="weather.condition.text"
         class="h-10 w-10"
       />
     </template>
@@ -38,13 +38,16 @@ const showSkeleton = computed(() => props.loading || !props.condition);
         <span v-else class="block h-4 w-16 rounded bg-wx-sky-100" />
       </div>
       <div class="mt-1 min-h-[16px] w-full text-left text-xs text-wx-gray-400 sm:mt-2 sm:min-h-[20px] sm:text-center">
-        <template v-if="!showSkeleton && condition">{{ condition.text }}</template>
+        <template v-if="!showSkeleton && weather">{{ weather.condition.text }}</template>
         <span v-else class="block h-3 w-20 rounded bg-wx-sky-100" />
       </div>
     </div>
 
-    <!-- Temp Placeholder (future) -->
-    <div v-if="!showSkeleton" class="ml-auto text-xl font-semibold sm:mt-4 sm:ml-0">—</div>
+    <!-- Temp -->
+    <div v-if="!showSkeleton" class="ml-auto text-xl font-semibold sm:mt-4 sm:ml-0">
+      <template v-if="weather?.temperature != null">{{ Math.round(weather.temperature) }} °C</template>
+      <span v-else>—</span>
+    </div>
     <div v-else class="ml-auto h-5 w-10 rounded bg-wx-sky-100 sm:mt-4 sm:ml-0" />
   </div>
 </template>

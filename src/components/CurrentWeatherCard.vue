@@ -1,24 +1,24 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import type { WeatherLocation } from '@/models/weather';
-
-interface WeatherCondition {
-  text: string;
-  icon: string;
-  code: number;
-}
+import type { WeatherLocation, WeatherCondition } from '@/models/weather';
 
 export interface CurrentWeatherCardProps {
   location: WeatherLocation | null;
-  condition: WeatherCondition | null;
+  condition: WeatherCondition | null; // renamed from weather
   loading: boolean;
-  temperatureC: number | null; // currentLocationTemperature from parent
 }
 
 const props = defineProps<CurrentWeatherCardProps>();
 
-const showSkeleton = computed(() => props.loading || !props.location || !props.condition || props.temperatureC == null);
+const showSkeleton = computed(
+  () => props.loading || !props.location || !props.condition || props.condition.temperature == null,
+);
+
+const temperatureDisplay = computed(() => {
+  const t = props.condition?.temperature;
+  return typeof t === 'number' ? Math.round(t) : null;
+});
 </script>
 
 <template>
@@ -30,10 +30,12 @@ const showSkeleton = computed(() => props.loading || !props.location || !props.c
     <div
       class="flex h-[60px] w-[60px] items-center justify-center overflow-hidden rounded-full bg-wx-sky-100 sm:h-32 sm:w-32"
     >
-      <template v-if="!showSkeleton && condition?.icon">
+      <template v-if="!showSkeleton && condition?.condition.icon">
         <img
-          :src="condition.icon.startsWith('http') ? condition.icon : `https:${condition.icon}`"
-          :alt="condition.text"
+          :src="
+            condition.condition.icon.startsWith('http') ? condition.condition.icon : `https:${condition.condition.icon}`
+          "
+          :alt="condition.condition.text"
           class="h-9 w-9 sm:h-16 sm:w-16"
         />
       </template>
@@ -49,16 +51,16 @@ const showSkeleton = computed(() => props.loading || !props.location || !props.c
         <span v-else class="block h-5 w-24 rounded bg-wx-sky-100 sm:h-8 sm:w-40" />
       </h2>
       <div class="mt-1 min-h-[16px] text-xs font-medium text-wx-gray-400 sm:mt-2 sm:min-h-[20px]">
-        <template v-if="!showSkeleton && condition">{{ condition.text }}</template>
+        <template v-if="!showSkeleton && condition">{{ condition.condition.text }}</template>
         <span v-else class="block h-3 w-16 rounded bg-wx-sky-100 sm:h-4 sm:w-28" />
       </div>
     </div>
 
-    <!-- Temperature Placeholder (data not yet wired) -->
+    <!-- Temperature -->
     <div class="ml-auto flex items-start gap-1 leading-none sm:mt-10 sm:ml-0">
       <template v-if="!showSkeleton">
         <span class="text-[52px] font-semibold tracking-tight sm:text-[140px]" style="line-height: 0.85">{{
-          Math.round(temperatureC!)
+          temperatureDisplay ?? '—'
         }}</span>
         <span class="mt-2 text-[20px] font-semibold sm:mt-3 sm:text-4xl">°C</span>
       </template>

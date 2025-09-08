@@ -1,8 +1,9 @@
 <script setup lang="ts">
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { computed, ref } from 'vue';
 
 import { useLocationForecastQuery, type LocationForecastFilters } from './queries/forecast.query';
+
+import type { WeatherCondition } from '@/models/weather';
 
 import CityTabs from '@/components/CityTabs.vue';
 import CurrentWeatherCard from '@/components/CurrentWeatherCard.vue';
@@ -28,18 +29,25 @@ const isForecastLoading = computed(
   () => locationForecastQuery.isFetching.value || locationForecastQuery.isLoading.value,
 );
 
-const currentLocationCondition = computed(() => {
+const currentLocationCondition = computed<WeatherCondition | null>(() => {
   if (locationForecastQuery.isFetching.value || locationForecastQuery.isError.value) {
     return null;
   }
-  return locationForecastQuery.data.value?.current.condition ?? null;
+  const data = locationForecastQuery.data.value;
+  if (!data) return null;
+  return { condition: data.current.condition, temperature: data.current.temp_c };
 });
 
-const forecastDayConditions = computed(() => {
+const forecastDayConditions = computed<WeatherCondition[]>(() => {
   if (locationForecastQuery.isFetching.value || locationForecastQuery.isError.value) {
     return [];
   }
-  return locationForecastQuery.data.value?.forecast.forecastday.map((d) => d.day.condition) ?? [];
+  return (
+    locationForecastQuery.data.value?.forecast.forecastday.map((d) => ({
+      condition: d.day.condition,
+      temperature: d.day.avgtemp_c,
+    })) ?? []
+  );
 });
 
 const currentLocation = computed(() => {
@@ -47,13 +55,6 @@ const currentLocation = computed(() => {
     return null;
   }
   return locationForecastQuery.data.value?.location ?? null;
-});
-
-const currentLocationTemperature = computed(() => {
-  if (locationForecastQuery.isFetching.value || locationForecastQuery.isError.value) {
-    return null;
-  }
-  return locationForecastQuery.data.value?.current.temp_c ?? null;
 });
 </script>
 
@@ -71,7 +72,6 @@ const currentLocationTemperature = computed(() => {
         :location="currentLocation"
         :condition="currentLocationCondition"
         :loading="isForecastLoading"
-        :temperature-c="currentLocationTemperature"
       />
 
       <div class="flex h-full flex-col gap-8 sm:justify-between sm:gap-0">
@@ -79,7 +79,7 @@ const currentLocationTemperature = computed(() => {
         <HourlyTimeline />
 
         <!-- Forecast Cards Row -->
-        <ForecastCardsRow />
+        <ForecastCardsRow :conditions="forecastDayConditions" :loading="isForecastLoading" />
       </div>
     </section>
   </main>

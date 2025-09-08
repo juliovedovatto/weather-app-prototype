@@ -5,6 +5,11 @@ export interface CurrentCondition {
   temp_c?: number;
 }
 
+export interface WeatherCondition {
+  condition: CurrentCondition;
+  temperature: number;
+}
+
 export interface WeatherLocation {
   name: string;
   region: string;
