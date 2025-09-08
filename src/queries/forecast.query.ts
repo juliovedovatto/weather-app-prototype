@@ -1,7 +1,7 @@
 import { useQuery, type UseQueryOptions } from '@tanstack/vue-query';
 import { toValue, type MaybeRefOrGetter } from 'vue';
 
-import type { ForecastHour } from '@/models/weather';
+import type { ForecastResponse } from '@/models/weather';
 
 import { getLocationForecast } from '@/api/weatherService';
 
@@ -11,27 +11,25 @@ export interface LocationForecastFilters {
   lang?: string;
 }
 
-interface HourlyForecastKeyArgs {
+interface LocationForecastKeyArgs {
   filters: MaybeRefOrGetter<LocationForecastFilters>;
 }
 
 export const forecastQueryKeys = {
-  hourlyForecast: ({ filters }: HourlyForecastKeyArgs) => ['weather', 'locationForecast', filters] as const,
+  locationForecast: ({ filters }: LocationForecastKeyArgs) => ['weather', 'locationForecast', filters] as const,
 };
 
-type UseHourlyForecastQueryArgs = Partial<UseQueryOptions<ForecastHour[], Error>> & HourlyForecastKeyArgs;
+type UseLocationForecastQueryArgs = Partial<UseQueryOptions<ForecastResponse, Error>> & LocationForecastKeyArgs;
 
 /**
- * Query to fetch weather forecast for a location.
+ * Query to fetch weather forecast (full forecast response including current + forecast days).
  */
-export const useLocationForecastQuery = ({ filters, ...options }: UseHourlyForecastQueryArgs) => {
+export const useLocationForecastQuery = ({ filters, ...options }: UseLocationForecastQueryArgs) => {
   return useQuery({
-    queryKey: forecastQueryKeys.hourlyForecast({ filters }),
+    queryKey: forecastQueryKeys.locationForecast({ filters }),
     queryFn: async () => {
       const { q, days, lang } = toValue(filters);
-
       const result = await getLocationForecast(toValue(q), { days, lang });
-
       return result;
     },
     ...options,
