@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, ref, watch } from 'vue';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { computed, ref } from 'vue';
 
 import { useLocationForecastQuery, type LocationForecastFilters } from './queries/forecast.query';
 
@@ -23,10 +24,29 @@ const locationForecastQuery = useLocationForecastQuery({
   filters: locationForecastFilters,
 });
 
-watch(locationForecastQuery.data, (val) => {
-  if (val) {
-    console.debug('Forecast hours loaded:', val.length);
+const isForecastLoading = computed(
+  () => locationForecastQuery.isFetching.value || locationForecastQuery.isLoading.value,
+);
+
+const currentLocationCondition = computed(() => {
+  if (locationForecastQuery.isFetching.value || locationForecastQuery.isError.value) {
+    return null;
   }
+  return locationForecastQuery.data.value?.current.condition ?? null;
+});
+
+const forecastDayConditions = computed(() => {
+  if (locationForecastQuery.isFetching.value || locationForecastQuery.isError.value) {
+    return [];
+  }
+  return locationForecastQuery.data.value?.forecast.forecastday.map((d) => d.day.condition) ?? [];
+});
+
+const currentLocation = computed(() => {
+  if (locationForecastQuery.isFetching.value || locationForecastQuery.isError.value) {
+    return null;
+  }
+  return locationForecastQuery.data.value?.location ?? null;
 });
 </script>
 
