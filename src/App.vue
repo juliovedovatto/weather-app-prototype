@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import CityTabs from '@/components/CityTabs.vue';
 import CurrentWeatherCard from '@/components/CurrentWeatherCard.vue';
+import ForecastCardsRow from '@/components/ForecastCardsRow.vue';
+import HourlyTimeline from '@/components/HourlyTimeline.vue';
 </script>
 
 <template>
@@ -17,97 +19,10 @@ import CurrentWeatherCard from '@/components/CurrentWeatherCard.vue';
 
       <div class="flex h-full flex-col gap-8 sm:justify-between sm:gap-0">
         <!-- Hourly timeline -->
-        <div class="-mx-4 flex gap-6 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0 md:overflow-visible md:pt-6">
-          <div class="flex w-32 flex-shrink-0 flex-col items-center gap-4 md:w-36">
-            <div class="text-xl font-medium text-wx-gray-400">Now</div>
-            <div class="flex h-24 w-24 items-center justify-center rounded-full bg-wx-sky-50">
-              <img src="/images/snow.svg" alt="Snowing" class="h-12 w-12" />
-            </div>
-            <div class="text-xl font-semibold">2 °C</div>
-          </div>
-          <div class="flex w-32 flex-shrink-0 flex-col items-center gap-4 md:w-36">
-            <div class="text-xl font-medium text-wx-gray-400">2 PM</div>
-            <div class="flex h-24 w-24 items-center justify-center rounded-full bg-wx-sky-100">
-              <img src="/images/snow.svg" alt="Snowing" class="h-12 w-12" />
-            </div>
-            <div class="text-xl font-semibold">4 °C</div>
-          </div>
-          <div class="flex w-32 flex-shrink-0 flex-col items-center gap-4 md:w-36">
-            <div class="text-xl font-medium text-wx-gray-400">3 PM</div>
-            <div class="flex h-24 w-24 items-center justify-center rounded-full bg-wx-aqua-100">
-              <img src="/images/cloudy.svg" alt="Cloudy" class="h-12 w-12" />
-            </div>
-            <div class="text-xl font-semibold">8 °C</div>
-          </div>
-          <div class="flex w-32 flex-shrink-0 flex-col items-center gap-4 md:w-36">
-            <div class="text-xl font-medium text-wx-gray-400">4 PM</div>
-            <div class="flex h-24 w-24 items-center justify-center rounded-full bg-wx-aqua-100">
-              <img src="/images/cloudy.svg" alt="Cloudy" class="h-12 w-12" />
-            </div>
-            <div class="text-xl font-semibold">10 °C</div>
-          </div>
-          <div class="flex w-32 flex-shrink-0 flex-col items-center gap-4 md:w-36">
-            <div class="text-xl font-medium text-wx-gray-400">5 PM</div>
-            <div class="flex h-24 w-24 items-center justify-center rounded-full bg-wx-amber-100">
-              <img src="/images/partly-cloudy.svg" alt="Partly cloudy" class="h-12 w-12" />
-            </div>
-            <div class="text-xl font-semibold">15 °C</div>
-          </div>
-        </div>
+        <HourlyTimeline />
 
         <!-- Forecast Cards Row -->
-        <div class="flex flex-col gap-4 overflow-visible pb-1 sm:flex-row sm:gap-6">
-          <div
-            class="flex w-full flex-shrink-0 flex-row items-center rounded-card-mobile bg-wx-sky-50 px-6 py-5-5 text-left shadow-sm ring-1 ring-black/5 sm:w-32 sm:flex-col sm:items-center sm:rounded-card sm:text-center sm:md:w-36"
-          >
-            <img src="/images/snow.svg" alt="Snowing" class="h-10 w-10" />
-            <div class="ml-4 flex flex-col sm:ml-0">
-              <div class="font-semibold sm:mt-4">Today</div>
-              <div class="text-xs text-wx-gray-400">Frozen</div>
-            </div>
-            <div class="ml-auto text-xl font-semibold sm:mt-4 sm:ml-0">2 °C</div>
-          </div>
-          <div
-            class="flex w-full flex-shrink-0 flex-row items-center rounded-card-mobile bg-wx-sky-100 px-6 py-5-5 text-left shadow-sm ring-1 ring-black/5 sm:w-32 sm:flex-col sm:items-center sm:rounded-card sm:text-center sm:md:w-36"
-          >
-            <img src="/images/snow.svg" alt="Snowing" class="h-10 w-10" />
-            <div class="ml-4 flex flex-col sm:ml-0">
-              <div class="font-semibold sm:mt-4">Tomorrow</div>
-              <div class="text-xs text-wx-gray-400">Frozen</div>
-            </div>
-            <div class="ml-auto text-xl font-semibold sm:mt-4 sm:ml-0">3 °C</div>
-          </div>
-          <div
-            class="flex w-full flex-shrink-0 flex-row items-center rounded-card-mobile bg-wx-aqua-100 px-6 py-5-5 text-left shadow-sm ring-1 ring-black/5 sm:w-32 sm:flex-col sm:items-center sm:rounded-card sm:text-center sm:md:w-36"
-          >
-            <img src="/images/partly-cloudy.svg" alt="Partly cloudy" class="h-10 w-10" />
-            <div class="ml-4 flex flex-col sm:ml-0">
-              <div class="font-semibold sm:mt-4">Wednesday</div>
-              <div class="text-xs text-wx-gray-400">Partly Cloudy</div>
-            </div>
-            <div class="ml-auto text-xl font-semibold sm:mt-4 sm:ml-0">10 °C</div>
-          </div>
-          <div
-            class="flex w-full flex-shrink-0 flex-row items-center rounded-card-mobile bg-wx-amber-100 px-6 py-5-5 text-left shadow-sm ring-1 ring-black/5 sm:w-32 sm:flex-col sm:items-center sm:rounded-card sm:text-center sm:md:w-36"
-          >
-            <img src="/images/partly-cloudy.svg" alt="Partly cloudy" class="h-10 w-10" />
-            <div class="ml-4 flex flex-col sm:ml-0">
-              <div class="font-semibold sm:mt-4">Thursday</div>
-              <div class="text-xs text-wx-gray-400">Partly Cloudy</div>
-            </div>
-            <div class="ml-auto text-xl font-semibold sm:mt-4 sm:ml-0">15 °C</div>
-          </div>
-          <div
-            class="flex w-full flex-shrink-0 flex-row items-center rounded-card-mobile bg-wx-pink-200 px-6 py-5-5 text-left shadow-sm ring-1 ring-black/5 sm:w-32 sm:flex-col sm:items-center sm:rounded-card sm:text-center sm:md:w-36"
-          >
-            <img src="/images/sunny.svg" alt="Sunny" class="h-10 w-10" />
-            <div class="ml-4 flex flex-col sm:ml-0">
-              <div class="font-semibold sm:mt-4">Friday</div>
-              <div class="text-xs text-wx-gray-400">Sunny</div>
-            </div>
-            <div class="ml-auto text-xl font-semibold sm:mt-4 sm:ml-0">32 °C</div>
-          </div>
-        </div>
+        <ForecastCardsRow />
       </div>
     </section>
   </main>
