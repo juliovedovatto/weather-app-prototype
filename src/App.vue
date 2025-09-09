@@ -9,8 +9,12 @@ import CityTabs from '@/components/CityTabs.vue';
 import CurrentWeatherCard from '@/components/CurrentWeatherCard.vue';
 import ForecastCardsRow from '@/components/ForecastCardsRow.vue';
 import HourlyTimeline from '@/components/HourlyTimeline.vue';
+import UserName from '@/components/UserName.vue';
 
 const selectedCity = ref('Denver');
+
+// Editable user name state
+const userName = ref('');
 
 function onCityChange(city: string) {
   if (selectedCity.value === city) {
@@ -80,7 +84,11 @@ const hourlyConditions = computed<ForecastHour[]>(() => {
 <template>
   <main class="container flex flex-col gap-12 px-4 py-6 sm:py-14">
     <!-- Welcome headline -->
-    <h1 class="text-xl leading-tight font-semibold sm:text-5xl">Good afternoon, Samantha 🌞</h1>
+    <h1 class="text-xl leading-tight font-semibold sm:text-5xl">
+      Good afternoon,
+      <UserName v-model:name="userName" />
+      <span>🌞</span>
+    </h1>
 
     <!-- City Tabs -->
     <CityTabs @change="onCityChange" />
