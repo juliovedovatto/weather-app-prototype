@@ -10,7 +10,9 @@
     "lint:fix": "eslint . --fix",
     "type-check": "vue-tsc --noEmit -p tsconfig.json",
     "prepare": "husky",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.13",
@@ -30,6 +32,10 @@
     "typescript": "^5.5.4",
     "typescript-eslint": "^8.0.1",
     "vite": "^7.1.4",
+    "vitest": "^2.0.5",
+    "@vue/test-utils": "^2.4.6",
+    "jsdom": "^24.0.0",
+    "@types/jsdom": "^21.1.7",
     "vue-tsc": "^2.0.28"
   },
   "dependencies": {
@@ -44,5 +50,9 @@
       "prettier --write",
       "eslint --fix"
     ]
+  },
+  "vitest": {
+    "environment": "jsdom",
+    "globals": true
   }
 }
