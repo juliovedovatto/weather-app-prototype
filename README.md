@@ -22,6 +22,8 @@ Modernized weather app prototype using:
 - `npm run type-check` – strict TypeScript project check via vue-tsc
 - `npm run test` – run unit tests once in CI mode
 - `npm run test:watch` – run unit tests in watch (dev) mode
+- `npm run deploy:preview` – deploy a preview build to Vercel (creates/updates a preview environment)
+- `npm run deploy` – deploy a production build to Vercel (`--prod`)
 
 ## Structure
 
@@ -100,6 +102,51 @@ Introducing Pinia now would add boilerplate without clear benefit. If future pur
 4. Open the printed local URL (default: http://localhost:5173).
 
 For production: configure the variable in your hosting provider's environment (do not commit `.env.local`).
+
+## Deployment (Vercel)
+
+> Prerequisites: Ensure the `VITE_WEATHERAPI_KEY` environment variable is configured in Vercel (Production + Preview) **before** running any deploy script. Without it the build will succeed but runtime requests will fail.
+
+The project is Vite-based and deploys cleanly on Vercel.
+
+Steps:
+
+1. Push repository to GitHub (or GitLab/Bitbucket) – main branch auto‑deploys by default.
+2. In Vercel dashboard: New Project → Import the repo.
+3. Framework preset: detect automatically (Vite). If not:
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+4. Set Environment Variables (Settings → Environment Variables):
+   - Name: `VITE_WEATHERAPI_KEY`
+   - Value: your WeatherAPI key
+   - Environments: check Production, Preview, and Development if you use Vercel preview URLs.
+5. (Optional) Add a protection: rotate the key if it has been exposed locally previously.
+6. Trigger a deploy (Vercel will build and serve `dist`).
+
+CLI deploys:
+
+- First authenticate (once): `npx vercel login`
+- Preview: `npm run deploy:preview` (creates a preview URL)
+- Production: `npm run deploy` (promotes build to production)
+
+If you update or add env vars after initial setup:
+
+- Set them in Vercel dashboard
+- (Optional) Pull locally with: `vercel env pull .env.local`
+- Redeploy using the appropriate script
+
+Notes:
+
+- Vite exposes any variable starting with `VITE_` to client code; treat the key as quota‑bounded (not a true secret).
+- Do NOT upload `.env.local`; rely on Vercel's encrypted store.
+- When rotating the key: update Vercel → redeploy → update local `.env.local` for parity.
+- If you add additional env variables later, redeploy is required for them to appear in the build.
+
+Local production preview:
+
+```bash
+npm run build && npm run preview
+```
 
 ## Tests
 
