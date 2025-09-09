@@ -20,12 +20,18 @@ Modernized weather app prototype using:
 ## Structure
 
 ```
-index.html        # Vue mount point
-src/main.ts       # App bootstrap
-src/App.vue       # Root component
-src/styles.css    # global styling, making use of tailwind design tokens
-src/api/client.ts # axios instance (agnostic)
-.env.sample       # example environment variables
+├─ index.html           # App mount point
+├─ src/
+│  ├─ api/              # Data access (e.g. clients, fetch helpers)
+│  ├─ components/       # Reusable / feature UI components
+│  ├─ config/           # Static app/domain configuration (barrel exported)
+│  ├─ models/           # Shared TypeScript model & domain types
+│  ├─ utils/            # Pure utility helpers (date, color, etc.)
+│  ├─ styles.css        # Global styles + Tailwind design tokens
+│  └─ App.vue           # Root component (composition + layout shell)
+├─ public/              # Static assets served as‑is
+├─ .env.sample          # Sample environment variables
+└─ tests (inline *.spec.ts near sources) # Unit tests colocated with code
 ```
 
 ## Design Tokens
