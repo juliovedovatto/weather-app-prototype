@@ -1,5 +1,6 @@
 /**
- * Map a temperature in Celsius to a Tailwind color token (without the `bg-` prefix).
+ * Map a temperature in Celsius to a Tailwind color token.
+ *
  * Ranges:
  *  - ≤ 8°C   -> cold
  *  - 9–14°C  -> mild
@@ -8,7 +9,8 @@
  *  - ≥ 26°C  -> hot
  *  - invalid or not defined -> neutral fallback
  *
- * @returns Color token string like `wx-sky-50`
+ * @param temp Temperature in Celsius
+ * @returns Color token string
  */
 export function getTemperatureColor(temp?: number | null) {
   if (temp == null || Number.isNaN(temp)) {
