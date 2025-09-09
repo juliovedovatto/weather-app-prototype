@@ -56,11 +56,34 @@ const locationForecastFilters = computed<LocationForecastFilters>(() => ({ q: se
 
 const locationForecastQuery = useLocationForecastQuery({
   filters: locationForecastFilters,
+  throwOnError: false,
 });
 
 const isForecastLoading = computed(
   () => locationForecastQuery.isFetching.value || locationForecastQuery.isLoading.value,
 );
+
+const forecastError = computed(() => {
+  if (!locationForecastQuery.isError.value) {
+    return null;
+  }
+
+  const err = locationForecastQuery.error.value as unknown;
+  if (
+    typeof err === 'object' &&
+    err &&
+    'message' in err &&
+    typeof (err as { message?: unknown }).message === 'string'
+  ) {
+    return (err as { message: string }).message;
+  }
+
+  return 'Failed to load forecast data. Please try again.';
+});
+
+function onRetryForecast() {
+  locationForecastQuery.refetch();
+}
 
 const currentLocationCondition = computed<WeatherCondition | null>(() => {
   if (locationForecastQuery.isFetching.value || locationForecastQuery.isError.value) {
@@ -121,6 +144,15 @@ const hourlyConditions = computed<ForecastHour[]>(() => {
 
     <!-- City Tabs -->
     <CityTabs @change="onCityChange" />
+
+    <template v-if="forecastError">
+      <div class="flex items-start gap-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+        <span class="flex-1">{{ forecastError }}</span>
+        <button type="button" class="shrink-0 font-medium underline hover:text-red-900" @click="onRetryForecast">
+          Retry
+        </button>
+      </div>
+    </template>
 
     <section class="flex flex-col gap-8 md:grid md:grid-cols-[260px_1fr] md:gap-x-7 md:gap-y-0">
       <!-- Current Weather Large Card -->
