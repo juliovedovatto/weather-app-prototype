@@ -13,7 +13,7 @@ export interface ForecastCardProps {
 
 const props = defineProps<ForecastCardProps>();
 
-const showSkeleton = computed(() => props.loading || !props.weather || props.weather.temperature == null);
+const showSkeleton = computed(() => props.loading || !props.weather || !props.weather.temperature);
 
 const bgClass = computed(
   () => `bg-${showSkeleton.value ? 'wx-gray-200' : getTemperatureColor(props.weather?.temperature)}`,
