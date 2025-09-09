@@ -1,18 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 
-export interface CityTab {
-  name: string;
-  label: string;
-}
+import type { TabItem } from '@/models/app';
 
-const CITY_TABS: CityTab[] = [
-  { name: 'Denver', label: 'Denver 🏔' },
-  { name: 'Rio de Janeiro', label: 'Rio de Janeiro ⛱' },
-  { name: 'Madrid', label: 'Madrid 💃' },
-  { name: 'Japan', label: 'Japan 🍣' },
-  { name: 'Australia', label: 'Australia 🐨' },
-];
+import { CITY_TABS } from '@/config';
 
 const emit = defineEmits<{
   change: [city: string];
@@ -20,7 +11,7 @@ const emit = defineEmits<{
 
 const selected = ref<string>(CITY_TABS[0]?.name ?? '');
 
-function onSelect(city: CityTab) {
+function onSelect(city: TabItem) {
   if (selected.value === city.name) {
     return;
   }
