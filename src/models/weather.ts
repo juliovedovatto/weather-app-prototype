@@ -6,8 +6,8 @@ export interface CurrentCondition {
 }
 
 export interface CurrentWeather {
-  location: WeatherLocation; // defined later
-  current: CurrentWeatherData; // defined later
+  location: WeatherLocation;
+  current: CurrentWeatherData;
 }
 
 export interface CurrentWeatherData {
@@ -75,16 +75,16 @@ export interface ForecastDay {
     moonrise: string;
     moonset: string;
     moon_phase: string;
-    moon_illumination: string; // API returns as string
+    moon_illumination: string;
     is_moon_up?: number;
     is_sun_up?: number;
   };
-  hour: ForecastHour[]; // defined later
+  hour: ForecastHour[];
 }
 
 export interface ForecastHour {
   time_epoch: number;
-  time: string; // e.g. "2025-09-08 14:00"
+  time: string;
   temp_c: number;
   temp_f: number;
   is_day: 0 | 1;
