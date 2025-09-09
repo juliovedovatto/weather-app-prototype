@@ -11,8 +11,8 @@
     "type-check": "vue-tsc --noEmit -p tsconfig.json",
     "prepare": "husky",
     "format": "prettier --write .",
-    "test": "vitest run",
-    "test:watch": "vitest"
+    "test": "LC_ALL=en_US.UTF-8 vitest run",
+    "test:watch": "LC_ALL=en_US.UTF-8 vitest"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.13",
@@ -50,9 +50,5 @@
       "prettier --write",
       "eslint --fix"
     ]
-  },
-  "vitest": {
-    "environment": "jsdom",
-    "globals": true
   }
 }
