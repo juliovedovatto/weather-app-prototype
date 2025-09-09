@@ -17,6 +17,7 @@ export default defineConfigWithVueTs([
   typescriptEslint.configs.recommended,
   vueTsConfigs.recommended,
   eslintPluginVue.configs['flat/recommended'],
+  eslintConfigPrettier,
   {
     files: ['**/*.{js,ts,vue}'],
     languageOptions: {
@@ -32,6 +33,7 @@ export default defineConfigWithVueTs([
       'no-console': ['error', { allow: ['warn', 'error'] }],
       'no-debugger': 'error',
       curly: ['error', 'all'],
+      'brace-style': ['error', '1tbs', { allowSingleLine: false }],
       eqeqeq: ['error', 'always', { null: 'ignore' }],
       'no-eval': 'error',
       'no-implied-eval': 'error',
@@ -88,5 +90,4 @@ export default defineConfigWithVueTs([
       },
     },
   },
-  eslintConfigPrettier,
 ]);

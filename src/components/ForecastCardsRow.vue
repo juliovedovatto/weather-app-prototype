@@ -17,8 +17,12 @@ const skeletonCount = computed(() => props.days ?? 5);
 const showSkeleton = computed(() => props.loading || props.conditions.length === 0);
 
 function labelForIndex(index: number) {
-  if (index === 0) return 'Today';
-  if (index === 1) return 'Tomorrow';
+  if (index === 0) {
+    return 'Today';
+  }
+  if (index === 1) {
+    return 'Tomorrow';
+  }
   const date = new Date();
   date.setDate(date.getDate() + index);
   return date.toLocaleDateString(undefined, { weekday: 'long' });
