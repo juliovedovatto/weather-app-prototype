@@ -5,4 +5,5 @@
 export interface TabItem {
   name: string;
   label: string;
+  selected?: boolean;
 }

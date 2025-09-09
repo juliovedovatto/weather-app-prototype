@@ -1,22 +1,31 @@
 import { mount } from '@vue/test-utils';
 import { test, expect } from 'vitest';
 
-import CityTabs from '@/components/CityTabs.vue';
+import type { TabItem } from '@/models/app';
 
-function setup() {
-  return mount(CityTabs);
+import CityTabs from '@/components/CityTabs.vue';
+import { CITY_TABS } from '@/config';
+
+const ITEMS: TabItem[] = CITY_TABS;
+
+function setup(custom?: Partial<{ items: TabItem[] }>) {
+  return mount(CityTabs, {
+    props: {
+      items: ITEMS,
+      ...custom,
+    },
+  });
 }
 
 test('renders all city tabs', () => {
   const wrapper = setup();
   const buttons = wrapper.findAll('button[role="tab"]');
-  // Expect 5 tabs based on component definition
-  expect(buttons.length).toBe(5);
+  expect(buttons.length).toBe(ITEMS.length);
   const labels = buttons.map((b) => b.text());
-  expect(labels).toEqual(['Denver 🏔', 'Rio de Janeiro ⛱', 'Madrid 💃', 'Japan 🍣', 'Australia 🐨']);
+  expect(labels).toEqual(ITEMS.map((i) => i.label));
 });
 
-test('first tab is selected by default', () => {
+test('first (selected) tab is selected by default', () => {
   const wrapper = setup();
   const buttons = wrapper.findAll('button[role="tab"]');
   const first = buttons[0]!;
@@ -48,6 +57,6 @@ test('emits change event with correct payload when selecting different tab', asy
 test('does not emit change when clicking already selected tab', async () => {
   const wrapper = setup();
   const buttons = wrapper.findAll('button[role="tab"]');
-  await buttons[0]!.trigger('click'); // Denver already selected
+  await buttons[0]!.trigger('click'); // already selected
   expect(wrapper.emitted('change')).toBeUndefined();
 });

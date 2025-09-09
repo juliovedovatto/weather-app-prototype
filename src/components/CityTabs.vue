@@ -1,24 +1,56 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, watch, onBeforeMount } from 'vue';
 
 import type { TabItem } from '@/models/app';
 
-import { CITY_TABS } from '@/config';
+export interface CityTabsProps {
+  items: TabItem[];
+}
+
+const props = defineProps<CityTabsProps>();
 
 const emit = defineEmits<{
   change: [city: string];
 }>();
 
-const selected = ref<string>(CITY_TABS[0]?.name ?? '');
+const selectedItem = ref<string>('');
 
-function onSelect(city: TabItem) {
-  if (selected.value === city.name) {
+watch(
+  () => props.items,
+  (value) => {
+    if (!value.length) {
+      selectedItem.value = '';
+      return;
+    }
+    const selected = value.find((i) => i.selected);
+    if (selected && selected.name !== selectedItem.value) {
+      selectedItem.value = selected.name;
+      emit('change', selectedItem.value);
+    } else if (!value.some((i) => i.name === selectedItem.value)) {
+      const first = value[0];
+      if (first) {
+        selectedItem.value = first.name;
+        emit('change', selectedItem.value);
+      }
+    }
+  },
+);
+
+function isSelectedItem(item: TabItem) {
+  return item.name === selectedItem.value;
+}
+
+function onSelect(item: TabItem) {
+  if (isSelectedItem(item)) {
     return;
   }
-
-  selected.value = city.name;
-  emit('change', city.name);
+  selectedItem.value = item.name;
+  emit('change', item.name);
 }
+
+onBeforeMount(() => {
+  selectedItem.value = props.items.find((i) => i.selected)?.name ?? props.items[0]?.name ?? '';
+});
 </script>
 
 <template>
@@ -28,15 +60,15 @@ function onSelect(city: TabItem) {
     class="-mx-4 flex gap-2 overflow-x-auto px-4 py-2 whitespace-nowrap sm:mx-0 sm:overflow-visible sm:px-0"
   >
     <button
-      v-for="city in CITY_TABS"
-      :key="city.name"
+      v-for="item in props.items"
+      :key="item.name"
       role="tab"
-      :aria-selected="selected === city.name"
+      :aria-selected="isSelectedItem(item)"
       class="cursor-pointer rounded-tab bg-white px-6 py-2 text-[18px] leading-tight font-semibold text-wx-navy-900 transition-colors hover:bg-wx-sky-100 focus:ring-2 focus:ring-wx-sky-50 focus:outline-none aria-selected:bg-wx-sky-100"
-      :class="selected === city.name ? 'bg-wx-sky-100 ring-1 ring-black/5' : 'ring-0'"
-      @click="onSelect(city)"
+      :class="isSelectedItem(item) ? 'bg-wx-sky-100 ring-1 ring-black/5' : 'ring-0'"
+      @click="onSelect(item)"
     >
-      {{ city.label }}
+      {{ item.label }}
     </button>
   </nav>
 </template>

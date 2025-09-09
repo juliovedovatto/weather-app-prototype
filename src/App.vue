@@ -4,18 +4,33 @@ import { computed, ref } from 'vue';
 import { CITY_TABS } from './config';
 import { useLocationForecastQuery, type LocationForecastFilters } from './queries/forecast.query';
 
+import type { TabItem } from './models/app';
 import type { WeatherCondition, ForecastHour } from '@/models/weather';
 
 import CityTabs from '@/components/CityTabs.vue';
 import CurrentWeatherCard from '@/components/CurrentWeatherCard.vue';
 import ForecastCardsRow from '@/components/ForecastCardsRow.vue';
 import HourlyTimeline from '@/components/HourlyTimeline.vue';
+import CitySearch from '@/components/search/CitySearch.vue';
 import UserName from '@/components/UserName.vue';
 
 const selectedCity = ref(CITY_TABS[0]?.name ?? '');
 
 // Editable user name state
 const userName = ref('');
+
+const availableCities = computed<TabItem[]>(() => {
+  const items = [...CITY_TABS, ...dynamicCities.value];
+
+  items.forEach((item) => {
+    item.selected = item.name === selectedCity.value;
+  });
+
+  return items;
+});
+
+// Dynamic added cities
+const dynamicCities = ref<TabItem[]>([]);
 
 const greeting = computed(() => {
   const hour = new Date().getHours();
@@ -45,13 +60,6 @@ const greeting = computed(() => {
   return { message, emoji };
 });
 
-function onCityChange(city: string) {
-  if (selectedCity.value === city) {
-    return;
-  }
-  selectedCity.value = city;
-}
-
 const locationForecastFilters = computed<LocationForecastFilters>(() => ({ q: selectedCity.value, days: 5 }));
 
 const locationForecastQuery = useLocationForecastQuery({
@@ -80,10 +88,6 @@ const forecastError = computed(() => {
 
   return 'Failed to load forecast data. Please try again.';
 });
-
-function onRetryForecast() {
-  locationForecastQuery.refetch();
-}
 
 const currentLocationCondition = computed<WeatherCondition | null>(() => {
   if (locationForecastQuery.isFetching.value || locationForecastQuery.isError.value) {
@@ -131,6 +135,26 @@ const hourlyConditions = computed<ForecastHour[]>(() => {
 
   return hours;
 });
+
+function onCityAdded(name: string) {
+  if (dynamicCities.value.some((c) => c.name === name) || CITY_TABS.some((c) => c.name === name)) {
+    return;
+  }
+
+  dynamicCities.value.push({ name, label: name });
+  selectedCity.value = name;
+}
+
+function onRetryForecast() {
+  locationForecastQuery.refetch();
+}
+
+function onCityChange(city: string) {
+  if (selectedCity.value === city) {
+    return;
+  }
+  selectedCity.value = city;
+}
 </script>
 
 <template>
@@ -143,7 +167,7 @@ const hourlyConditions = computed<ForecastHour[]>(() => {
     </h1>
 
     <!-- City Tabs -->
-    <CityTabs @change="onCityChange" />
+    <CityTabs :items="availableCities" @change="onCityChange" />
 
     <template v-if="forecastError">
       <div class="flex items-start gap-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
@@ -171,5 +195,8 @@ const hourlyConditions = computed<ForecastHour[]>(() => {
         <ForecastCardsRow :conditions="forecastDayConditions" :loading="isForecastLoading" />
       </div>
     </section>
+
+    <!-- City Search -->
+    <CitySearch @city-added="onCityAdded" />
   </main>
 </template>
