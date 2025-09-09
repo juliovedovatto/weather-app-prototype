@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { fromUnixTime, startOfHour } from 'date-fns';
-import { toZonedTime } from 'date-fns-tz';
+import { startOfHour } from 'date-fns';
 import { computed } from 'vue';
 
 import type { ForecastHour, HourlyWeatherCondition, WeatherLocation } from '@/models/weather';
 
 import HourlyTimelineCard from '@/components/HourlyTimelineCard.vue';
+import { unixTimeToDate, convertToTimezone } from '@/utils/date';
 
 export interface HourlyTimelineProps {
   conditions: ForecastHour[];
@@ -22,7 +22,7 @@ const props = withDefaults(defineProps<HourlyTimelineProps>(), {
 
 const showSkeleton = computed(() => props.loading || !props.location || !props.conditions.length);
 const locationTz = computed(() => props.location?.tz_id || '');
-const nowDate = computed(() => toZonedTime(new Date(), locationTz.value));
+const nowDate = computed(() => convertToTimezone(new Date(), locationTz.value));
 
 const hourlyConditions = computed<HourlyWeatherCondition[]>(() => {
   if (showSkeleton.value) {
@@ -30,11 +30,11 @@ const hourlyConditions = computed<HourlyWeatherCondition[]>(() => {
   }
 
   const nowEpoch = Math.floor(nowDate.value.getTime() / 1000);
-  const date = fromUnixTime(nowEpoch);
+  const date = unixTimeToDate(nowEpoch);
   const nowHour = startOfHour(date);
 
   const filteredTime = props.conditions.filter((h) => {
-    const time = toZonedTime(fromUnixTime(h.time_epoch), locationTz.value);
+    const time = convertToTimezone(unixTimeToDate(h.time_epoch), locationTz.value);
     return time >= nowHour;
   });
 

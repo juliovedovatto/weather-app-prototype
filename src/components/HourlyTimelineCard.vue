@@ -3,7 +3,7 @@ import { computed } from 'vue';
 
 import type { HourlyWeatherCondition, WeatherLocation } from '@/models/weather';
 
-import { toZoned, formatHour } from '@/utils/date';
+import { convertToTimezone, formatHour } from '@/utils/date';
 import { getTemperatureColor } from '@/utils/temperatureColor';
 
 export interface HourlyTimelineCardProps {
@@ -15,7 +15,7 @@ export interface HourlyTimelineCardProps {
 const props = defineProps<HourlyTimelineCardProps>();
 
 const showSkeleton = computed(() => props.loading || !props.condition || !props.location);
-const nowDate = computed(() => (props.location ? toZoned(new Date(), props.location.tz_id) : null));
+const nowDate = computed(() => (props.location ? convertToTimezone(new Date(), props.location.tz_id) : null));
 
 const hour = computed(() => {
   if (showSkeleton.value || !props.condition || !props.location || !nowDate.value) {
