@@ -132,8 +132,7 @@ export interface ForecastResponse {
 
 export interface HourlyWeatherCondition extends WeatherCondition {
   timeEpoch: number;
-  time: string; // localized time string from API (e.g. "2025-09-08 14:00")
-  isDay: boolean; // derived from ForecastHour.is_day === 1
+  time: string;
 }
 
 export interface WeatherCondition {
