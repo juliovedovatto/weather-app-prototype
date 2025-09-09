@@ -44,19 +44,19 @@ test('clicking another tab updates selection', async () => {
   expect(target.attributes()['aria-selected']).toBe('true');
 });
 
-test('emits change event with correct payload when selecting different tab', async () => {
+test('emits tabSelected event with correct payload when selecting different tab', async () => {
   const wrapper = setup();
   const buttons = wrapper.findAll('button[role="tab"]');
   const rio = buttons[1]!;
   await rio.trigger('click');
-  const events = wrapper.emitted('change');
+  const events = wrapper.emitted('tabSelected');
   expect(events).toBeTruthy();
   expect(events?.[0]?.[0]).toBe('Rio de Janeiro');
 });
 
-test('does not emit change when clicking already selected tab', async () => {
+test('does not emit tabSelected when clicking already selected tab', async () => {
   const wrapper = setup();
   const buttons = wrapper.findAll('button[role="tab"]');
   await buttons[0]!.trigger('click'); // already selected
-  expect(wrapper.emitted('change')).toBeUndefined();
+  expect(wrapper.emitted('tabSelected')).toBeUndefined();
 });

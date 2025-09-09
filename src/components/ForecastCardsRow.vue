@@ -6,14 +6,14 @@ import ForecastCard from './ForecastCard.vue';
 import type { WeatherCondition } from '@/models/weather';
 
 export interface ForecastCardsRowProps {
-  conditions: WeatherCondition[]; // rename later if desired
+  conditions: WeatherCondition[];
   loading: boolean;
   days?: number;
 }
 
-const props = defineProps<ForecastCardsRowProps>();
+const props = withDefaults(defineProps<ForecastCardsRowProps>(), { days: 5 });
 
-const skeletonCount = computed(() => props.days ?? 5);
+const skeletonCount = computed(() => props.days);
 const showSkeleton = computed(() => props.loading || props.conditions.length === 0);
 
 function labelForIndex(index: number) {

@@ -149,7 +149,7 @@ function onRetryForecast() {
   locationForecastQuery.refetch();
 }
 
-function onCityChange(city: string) {
+function onTabSelected(city: string) {
   if (selectedCity.value === city) {
     return;
   }
@@ -167,7 +167,7 @@ function onCityChange(city: string) {
     </h1>
 
     <!-- City Tabs -->
-    <CityTabs :items="availableCities" @change="onCityChange" />
+    <CityTabs :items="availableCities" @tab-selected="onTabSelected" />
 
     <template v-if="forecastError">
       <div class="flex items-start gap-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">

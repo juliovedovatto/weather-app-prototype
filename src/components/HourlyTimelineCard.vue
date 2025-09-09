@@ -12,7 +12,7 @@ export interface HourlyTimelineCardProps {
   loading?: boolean;
 }
 
-const props = defineProps<HourlyTimelineCardProps>();
+const props = withDefaults(defineProps<HourlyTimelineCardProps>(), { condition: null, loading: false });
 
 const showSkeleton = computed(() => props.loading || !props.condition || !props.location);
 const nowDate = computed(() => (props.location ? convertToTimezone(new Date(), props.location.tz_id) : null));

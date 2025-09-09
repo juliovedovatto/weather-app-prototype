@@ -11,7 +11,10 @@ export interface ForecastCardProps {
   loading: boolean;
 }
 
-const props = defineProps<ForecastCardProps>();
+const props = withDefaults(defineProps<ForecastCardProps>(), {
+  weather: null,
+  loading: false,
+});
 
 const showSkeleton = computed(() => props.loading || !props.weather || !props.weather.temperature);
 

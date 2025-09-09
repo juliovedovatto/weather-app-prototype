@@ -8,12 +8,9 @@ export interface CityTabsProps {
 }
 
 const props = defineProps<CityTabsProps>();
+const emit = defineEmits<{ tabSelected: [city: string] }>();
 
-const emit = defineEmits<{
-  change: [city: string];
-}>();
-
-const selectedItem = ref<string>('');
+const selectedItem = ref('');
 
 watch(
   () => props.items,
@@ -25,12 +22,12 @@ watch(
     const selected = value.find((i) => i.selected);
     if (selected && selected.name !== selectedItem.value) {
       selectedItem.value = selected.name;
-      emit('change', selectedItem.value);
+      emit('tabSelected', selectedItem.value);
     } else if (!value.some((i) => i.name === selectedItem.value)) {
       const first = value[0];
       if (first) {
         selectedItem.value = first.name;
-        emit('change', selectedItem.value);
+        emit('tabSelected', selectedItem.value);
       }
     }
   },
@@ -45,7 +42,7 @@ function onSelect(item: TabItem) {
     return;
   }
   selectedItem.value = item.name;
-  emit('change', item.name);
+  emit('tabSelected', item.name);
 }
 
 onBeforeMount(() => {

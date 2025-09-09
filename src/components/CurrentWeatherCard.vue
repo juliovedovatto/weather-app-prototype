@@ -12,7 +12,7 @@ export interface CurrentWeatherCardProps {
   locationName?: string;
 }
 
-const props = defineProps<CurrentWeatherCardProps>();
+const props = withDefaults(defineProps<CurrentWeatherCardProps>(), { locationName: '' });
 
 const showSkeleton = computed(
   () => props.loading || !props.location || !props.condition || props.condition.temperature == null,
