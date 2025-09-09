@@ -3,7 +3,7 @@ import { computed, ref } from 'vue';
 
 import { useLocationForecastQuery, type LocationForecastFilters } from './queries/forecast.query';
 
-import type { WeatherCondition } from '@/models/weather';
+import type { WeatherCondition, HourlyWeatherCondition } from '@/models/weather';
 
 import CityTabs from '@/components/CityTabs.vue';
 import CurrentWeatherCard from '@/components/CurrentWeatherCard.vue';
@@ -56,6 +56,30 @@ const currentLocation = computed(() => {
   }
   return locationForecastQuery.data.value?.location ?? null;
 });
+
+const hourlyConditions = computed<HourlyWeatherCondition[]>(() => {
+  if (locationForecastQuery.isFetching.value || locationForecastQuery.isError.value) {
+    return [];
+  }
+  const data = locationForecastQuery.data.value;
+  if (!data) return [];
+
+  const nowEpoch = data.current.last_updated_epoch;
+  const todayHours = data.forecast.forecastday[0]?.hour ?? [];
+  const nextDayHours = data.forecast.forecastday[1]?.hour ?? [];
+  const all = [...todayHours, ...nextDayHours];
+
+  return all
+    .filter((h) => h.time_epoch >= nowEpoch)
+    .slice(0, 5)
+    .map((h) => ({
+      timeEpoch: h.time_epoch,
+      time: h.time,
+      condition: h.condition,
+      temperature: h.temp_c,
+      isDay: h.is_day === 1,
+    }));
+});
 </script>
 
 <template>
@@ -76,7 +100,7 @@ const currentLocation = computed(() => {
 
       <div class="flex h-full flex-col gap-8 sm:justify-between sm:gap-0">
         <!-- Hourly timeline -->
-        <HourlyTimeline />
+        <HourlyTimeline :conditions="hourlyConditions" />
 
         <!-- Forecast Cards Row -->
         <ForecastCardsRow :conditions="forecastDayConditions" :loading="isForecastLoading" />
