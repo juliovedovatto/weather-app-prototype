@@ -37,6 +37,7 @@ Modernized weather app prototype using:
 │  ├─ styles.css        # Global styles + Tailwind design tokens
 │  └─ App.vue           # Root component (composition + layout shell)
 ├─ public/              # Static assets served as‑is
+├─ docs/                # Documentation (CONVENTIONS, screenshots, etc.)
 ├─ .env.sample          # Sample environment variables
 └─ tests (inline *.spec.ts near sources) # Unit tests colocated with code
 ```
