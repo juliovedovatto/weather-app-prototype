@@ -18,7 +18,7 @@ export default defineConfigWithVueTs([
   vueTsConfigs.recommended,
   eslintPluginVue.configs['flat/recommended'],
   {
-    files: ['**/*.{ts,vue}'],
+    files: ['**/*.{js,ts,vue}'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
@@ -27,13 +27,52 @@ export default defineConfigWithVueTs([
         parser: typescriptEslint.parser,
       },
     },
-    rules: {},
+    rules: {
+      // General safety rules
+      'no-console': ['error', { allow: ['warn', 'error'] }],
+      'no-debugger': 'error',
+      curly: ['error', 'all'],
+      eqeqeq: ['error', 'always', { null: 'ignore' }],
+      'no-eval': 'error',
+      'no-implied-eval': 'error',
+      'no-new-func': 'error',
+      'no-new-wrappers': 'error',
+      'no-var': 'error',
+
+      // Style & consistency
+      'no-multi-spaces': [
+        'error',
+        {
+          ignoreEOLComments: true,
+          exceptions: { ImportDeclaration: true, VariableDeclarator: true, Property: true },
+        },
+      ],
+      'prefer-const': ['error', { destructuring: 'all' }],
+      'prefer-exponentiation-operator': 'error',
+      'prefer-template': 'error',
+      'spaced-comment': ['error', 'always', { exceptions: ['-', '+'], markers: ['/'] }],
+      yoda: ['error', 'never'],
+
+      // Extra recommended
+      'no-empty': ['error', { allowEmptyCatch: true }],
+      'no-unsafe-optional-chaining': 'error',
+      'dot-notation': 'error',
+      'object-shorthand': 'error',
+
+      // Return-await behavior
+      'no-return-await': 'off', // disable core opposite
+      '@typescript-eslint/return-await': ['error', 'always'],
+    },
   },
   {
     plugins: {
       import: importPlugin,
+      'better-tailwindcss': betterTailwindCSSPlugin,
     },
     rules: {
+      ...betterTailwindCSSPlugin.configs['recommended-warn'].rules,
+      'better-tailwindcss/enforce-consistent-line-wrapping': 'off',
+
       'import/order': [
         'warn',
         {
@@ -43,20 +82,11 @@ export default defineConfigWithVueTs([
         },
       ],
     },
-  },
-  eslintConfigPrettier,
-  {
-    plugins: {
-      'better-tailwindcss': betterTailwindCSSPlugin,
-    },
-    rules: {
-      ...betterTailwindCSSPlugin.configs['recommended-warn'].rules,
-      'better-tailwindcss/enforce-consistent-line-wrapping': 'off',
-    },
     settings: {
       'better-tailwindcss': {
         entryPoint: fileURLToPath(new URL('./src/styles.css', import.meta.url)),
       },
     },
   },
+  eslintConfigPrettier,
 ]);
