@@ -7,8 +7,8 @@ import { getTemperatureColor } from '@/utils/temperatureColor';
 
 export interface ForecastCardProps {
   label: string;
-  weather: WeatherCondition | null;
-  loading: boolean;
+  weather?: WeatherCondition | null;
+  loading?: boolean;
 }
 
 const props = withDefaults(defineProps<ForecastCardProps>(), {
