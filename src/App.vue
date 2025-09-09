@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { fromUnixTime, startOfHour } from 'date-fns';
+import { toZonedTime } from 'date-fns-tz';
 import { computed, ref } from 'vue';
 
 import { useLocationForecastQuery, type LocationForecastFilters } from './queries/forecast.query';
@@ -34,7 +36,9 @@ const currentLocationCondition = computed<WeatherCondition | null>(() => {
     return null;
   }
   const data = locationForecastQuery.data.value;
-  if (!data) return null;
+  if (!data) {
+    return null;
+  }
   return { condition: data.current.condition, temperature: data.current.temp_c };
 });
 
@@ -57,28 +61,42 @@ const currentLocation = computed(() => {
   return locationForecastQuery.data.value?.location ?? null;
 });
 
+const nowDate = computed(() => toZonedTime(new Date(), currentLocation.value?.tz_id || ''));
+
 const hourlyConditions = computed<HourlyWeatherCondition[]>(() => {
   if (locationForecastQuery.isFetching.value || locationForecastQuery.isError.value) {
     return [];
   }
   const data = locationForecastQuery.data.value;
-  if (!data) return [];
+  if (!data || !currentLocation.value) {
+    return [];
+  }
 
-  const nowEpoch = data.current.last_updated_epoch;
+  const nowEpoch = Math.floor(nowDate.value.getTime() / 1000);
+
+  const date = fromUnixTime(nowEpoch);
+  const nowHour = startOfHour(date);
+
   const todayHours = data.forecast.forecastday[0]?.hour ?? [];
   const nextDayHours = data.forecast.forecastday[1]?.hour ?? [];
-  const all = [...todayHours, ...nextDayHours];
+  const hours = [...todayHours, ...nextDayHours];
 
-  return all
-    .filter((h) => h.time_epoch >= nowEpoch)
-    .slice(0, 5)
-    .map((h) => ({
-      timeEpoch: h.time_epoch,
-      time: h.time,
-      condition: h.condition,
-      temperature: h.temp_c,
-      isDay: h.is_day === 1,
-    }));
+  if (!hours.length) {
+    return [];
+  }
+
+  const filteredTime = hours.filter((h) => {
+    const time = toZonedTime(fromUnixTime(h.time_epoch), currentLocation.value?.tz_id || '');
+
+    return time >= nowHour;
+  });
+
+  return filteredTime.slice(0, 5).map((h) => ({
+    timeEpoch: h.time_epoch,
+    time: h.time,
+    condition: h.condition,
+    temperature: h.temp_c,
+  }));
 });
 </script>
 
@@ -100,7 +118,7 @@ const hourlyConditions = computed<HourlyWeatherCondition[]>(() => {
 
       <div class="flex h-full flex-col gap-8 sm:justify-between sm:gap-0">
         <!-- Hourly timeline -->
-        <HourlyTimeline :conditions="hourlyConditions" />
+        <HourlyTimeline :conditions="hourlyConditions" :location="currentLocation" />
 
         <!-- Forecast Cards Row -->
         <ForecastCardsRow :conditions="forecastDayConditions" :loading="isForecastLoading" />
