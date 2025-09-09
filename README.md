@@ -9,6 +9,8 @@ Modernized weather app prototype using:
 - Prettier
 - TanStack Query
 
+![App Screenshot](./docs/screenshot.png)
+
 ## Scripts
 
 - `npm run dev` – start dev server
@@ -122,7 +124,7 @@ npm run test:watch  # watch mode during development
 
 Add new tests by creating a `*.spec.ts` beside the target component or module. Avoid deep directory structures for tests to keep proximity and reduce cognitive overhead.
 
-## Planned Work
+## Planned Work (TO DO)
 
 - Introduce E2E testing (e.g. Playwright) for critical user flows
 - Add integration tests covering component interaction + data fetching boundaries
@@ -130,3 +132,6 @@ Add new tests by creating a `*.spec.ts` beside the target component or module. A
 - Introduce fixtures & API mocking (evaluate `msw` for network interception and realistic mocks)
 - Potential: coverage thresholds & CI reporting once suite matures
 - Improve client-side state management for non-server data (e.g. user prefs, UI state) — evaluate introducing Pinia alongside TanStack Query
+- Improve error management (graceful fallback UI, retry affordances, centralized handling)
+- Add toast/notification component for user-friendly success & error messages (API failures, stale data refresh)
+- Evaluate using local optimized weather icons from `public/images` instead of remote API icons (consistency, performance, offline resiliency)
