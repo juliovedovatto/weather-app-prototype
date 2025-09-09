@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
+import { CITY_TABS } from './config';
 import { useLocationForecastQuery, type LocationForecastFilters } from './queries/forecast.query';
 
 import type { WeatherCondition, ForecastHour } from '@/models/weather';
@@ -11,7 +12,7 @@ import ForecastCardsRow from '@/components/ForecastCardsRow.vue';
 import HourlyTimeline from '@/components/HourlyTimeline.vue';
 import UserName from '@/components/UserName.vue';
 
-const selectedCity = ref('Denver');
+const selectedCity = ref(CITY_TABS[0]?.name ?? '');
 
 // Editable user name state
 const userName = ref('');
@@ -127,6 +128,7 @@ const hourlyConditions = computed<ForecastHour[]>(() => {
         :location="currentLocation"
         :condition="currentLocationCondition"
         :loading="isForecastLoading"
+        :location-name="selectedCity"
       />
 
       <div class="flex h-full flex-col gap-8 sm:justify-between sm:gap-0">

@@ -7,8 +7,9 @@ import { getTemperatureColor } from '@/utils/temperatureColor';
 
 export interface CurrentWeatherCardProps {
   location: WeatherLocation | null;
-  condition: WeatherCondition | null; // renamed from weather
+  condition: WeatherCondition | null;
   loading: boolean;
+  locationName?: string;
 }
 
 const props = defineProps<CurrentWeatherCardProps>();
@@ -20,6 +21,18 @@ const showSkeleton = computed(
 const temperatureDisplay = computed(() => {
   const t = props.condition?.temperature;
   return typeof t === 'number' ? Math.round(t) : null;
+});
+
+const displayLocationName = computed(() => {
+  if (!props.location) {
+    return '';
+  }
+
+  if (props.locationName && props.location.name !== props.locationName) {
+    return props.locationName;
+  }
+
+  return props.location.name;
 });
 
 const bgClass = computed(
@@ -45,7 +58,7 @@ const bgClass = computed(
     <!-- Textual Info -->
     <div class="ml-6 flex w-[140px] flex-col sm:mt-10 sm:ml-0 sm:w-full">
       <h2 class="truncate text-xl leading-none font-semibold sm:text-[32px]">
-        <template v-if="!showSkeleton && location">{{ location.name }}</template>
+        <template v-if="!showSkeleton && location">{{ displayLocationName }}</template>
         <span v-else class="block h-5 w-24 rounded bg-wx-gray-300 sm:h-8 sm:w-40" />
       </h2>
       <div class="mt-1 min-h-[16px] text-xs font-medium text-wx-gray-700 sm:mt-2 sm:min-h-[20px]">
