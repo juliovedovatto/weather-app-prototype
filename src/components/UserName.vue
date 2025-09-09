@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, nextTick } from 'vue';
 
 export interface UserNameProps {
   name: string;
@@ -41,9 +41,12 @@ function onCancelEditing() {
   editing.value = false;
 }
 
-onMounted(() => {
+onMounted(async () => {
   if (!props.name.trim()) {
     editing.value = true;
+
+    await nextTick();
+    inputRef.value?.focus();
   }
 });
 </script>
