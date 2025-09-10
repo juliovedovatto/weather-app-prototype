@@ -12,15 +12,18 @@
       "DOM"
     ],
     "types": [
-      "node"
+      "node",
+      "@playwright/test"
     ]
   },
   "include": [
     "vite.config.ts",
+    "playwright.config.ts",
     "src/**/*.ts",
     "src/**/*.d.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
+    "tests/e2e/**/*.ts",
     "tests/**/*.ts"
   ],
   "exclude": [
