@@ -5,3 +5,7 @@ dist/
 .env
 .env.*
 !.env.sample
+
+# Playwright artifacts
+playwright-report/
+test-results/
