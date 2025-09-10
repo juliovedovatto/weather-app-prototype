@@ -34,7 +34,7 @@ function onCityAdded(name: string) {
 </script>
 
 <template>
-  <div class="flex flex-col gap-2">
+  <div data-test="city-search" class="flex flex-col gap-2">
     <label class="text-sm font-medium" for="city-search">Add city</label>
     <input
       id="city-search"

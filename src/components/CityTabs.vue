@@ -52,6 +52,7 @@ onBeforeMount(() => {
 
 <template>
   <nav
+    data-test="city-tabs"
     aria-label="Select city"
     role="tablist"
     class="-mx-4 flex gap-2 overflow-x-auto px-4 py-2 whitespace-nowrap sm:mx-0 sm:overflow-visible sm:px-0"
