@@ -21,7 +21,8 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "vite.config.ts",
-    "vitest.config.ts"
+    "vitest.config.ts",
+    "tests/**/*.ts"
   ],
   "exclude": [
     "dist",

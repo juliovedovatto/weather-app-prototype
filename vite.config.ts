@@ -27,6 +27,7 @@ export default defineConfig(({ mode }) => {
       restoreMocks: true,
       unstubEnvs: true,
       unstubGlobals: true,
+      setupFiles: ['tests/setup-env.ts'],
     },
   };
 });

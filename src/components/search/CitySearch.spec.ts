@@ -4,10 +4,6 @@ import { ref, type Ref, nextTick } from 'vue';
 
 import CitySearch from '@/components/search/CitySearch.vue';
 
-vi.mock('@vueuse/core', () => ({
-  useDebounce: <T>(r: Ref<T>) => r,
-}));
-
 type MockLocation = { url: string; name: string; country: string; region: string };
 interface QueryState {
   data: Ref<MockLocation[] | null>;
