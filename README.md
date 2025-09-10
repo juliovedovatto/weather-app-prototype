@@ -20,28 +20,33 @@ Modernized weather app prototype using:
 - `npm run lint:fix` – attempt automatic ESLint fixes
 - `npm run format` – run Prettier write across the repo
 - `npm run type-check` – strict TypeScript project check via vue-tsc
-- `npm run test` – run unit tests once in CI mode
+- `npm run test` – run unit tests once in CI mode (Vitest)
 - `npm run test:watch` – run unit tests in watch (dev) mode
+- `npm run test:e2e` – run E2E tests (Chromium only)
+- `npm run test:e2e:ui` – open UI mode (Chromium)
+- `npm run test:e2e:report` – open last E2E HTML report
+- `npm run test:e2e:codegen` – interactive code generator (Chromium)
 - `npm run deploy:preview` – deploy a preview build to Vercel (creates/updates a preview environment)
 - `npm run deploy` – deploy a production build to Vercel (`--prod`)
 
 ## Structure
 
 ```
-├─ index.html           # App mount point
+├─ index.html                 # App mount point
 ├─ src/
-│  ├─ api/              # Data access (e.g. clients, fetch helpers)
-│  ├─ queries/          # Data fetching hooks / TanStack Query definitions
-│  ├─ components/       # Reusable / feature UI components
-│  ├─ config/           # Static app/domain configuration (barrel exported)
-│  ├─ models/           # Shared TypeScript model & domain types
-│  ├─ utils/            # Pure utility helpers (date, color, etc.)
-│  ├─ styles.css        # Global styles + Tailwind design tokens
-│  └─ App.vue           # Root component (composition + layout shell)
-├─ public/              # Static assets served as‑is
-├─ docs/                # Documentation (CONVENTIONS, screenshots, etc.)
-├─ .env.sample          # Sample environment variables
-└─ tests (inline *.spec.ts near sources) # Unit tests colocated with code
+│  ├─ api/                    # Data access (HTTP clients, REST helpers)
+│  ├─ queries/                # TanStack Query definitions (data fetching hooks)
+│  ├─ components/             # Reusable & feature UI components
+│  ├─ config/                 # Static configuration / constants (barrel exported)
+│  ├─ models/                 # Shared domain & TypeScript model types
+│  ├─ utils/                  # Pure utilities (date, formatting, etc.)
+│  ├─ styles.css              # Global styles + Tailwind design tokens (@theme)
+│  └─ App.vue                 # Root shell / layout composition
+├─ tests/                     # Test root (unit tests setup/helpers/environment config. Unit tests are in src as *.spec.ts)
+│  └─ e2e/                    # Playwright E2E specs
+├─ docs/                      # Documentation (conventions, screenshots, etc.)
+├─ public/                    # Static assets served as‑is
+├─ .env.sample                # Example environment variables template
 ```
 
 ## Design Tokens
@@ -172,9 +177,29 @@ npm run test:watch  # watch mode during development
 
 Add new tests by creating a `*.spec.ts` beside the target component or module. Avoid deep directory structures for tests to keep proximity and reduce cognitive overhead.
 
+### E2E Tests (Playwright)
+
+Location: `tests/e2e/`
+
+Only `chromium` is supported for E2E testing.
+
+Commands:
+
+```bash
+npm run test:e2e         # headless run (chromium)
+npm run test:e2e:ui      # headed + inspector
+npm run test:e2e:report  # open HTML report
+npm run test:e2e:codegen # interactive code generation
+```
+
+Environment:
+
+- Requires a valid `VITE_WEATHERAPI_KEY` for live WeatherAPI requests.
+- Network calls are currently live (no mocking). Future improvement: introduce MSW (or Playwright route interception) for deterministic data and offline CI.
+
 ## Planned Work (TO DO)
 
-- Introduce E2E testing (e.g. Playwright) for critical user flows
+- Introduce E2E testing for critical user flows
 - Add integration tests covering component interaction + data fetching boundaries
 - Expand utility and component test coverage
 - Introduce fixtures & API mocking (evaluate `msw` for network interception and realistic mocks)

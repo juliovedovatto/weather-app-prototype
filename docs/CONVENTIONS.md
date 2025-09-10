@@ -98,7 +98,7 @@ A concise reference of agreed conventions for code, tests, structure, and workfl
 - Safelist / explicit generation strategy for dynamic background classes.
 - Keep class lists intentional, grouped by role (layout | spacing | typography | color | state).
 
-## 7. Testing
+## 7. Unit Testing
 
 - Framework: Vitest + `@vue/test-utils` + `jsdom` environment.
 - Config lives inside `vite.config.ts` (no standalone `vitest.config.ts`).
@@ -110,6 +110,15 @@ A concise reference of agreed conventions for code, tests, structure, and workfl
 - Use `nextTick()` when asserting post-mount reactive effects (e.g. auto-focus / auto-edit logic).
 - Assertions: guard optional arrays from `wrapper.emitted()` before indexing (`events?.[0]?.[0]`).
 - Test coverage focus progression: utilities → isolated components → interaction/integration (planned) → E2E (planned).
+
+## E2E Testing
+
+- Location: all E2E specs live under `tests/e2e/`
+- Naming: `<feature>.test.ts` (e.g. `home.test.ts`, `city-search.test.ts` if split later)
+- One primary user flow per file (add additional tests in the same file when flows share setup)
+- Prefer explicit `data-test` attributes for stable selectors (avoid brittle CSS/text selectors)
+- Keep assertions focused on observable behavior (DOM + network patterns)
+- Avoid conditional logic in tests (lint enforced via `eslint-plugin-playwright`)
 
 ## 8. Accessibility
 
