@@ -18,7 +18,8 @@
     "test:e2e:report": "playwright show-report",
     "test:e2e:codegen": "playwright codegen",
     "deploy:preview": "vercel --confirm",
-    "deploy": "vercel --prod --confirm"
+    "deploy": "vercel --prod --confirm",
+    "postinstall": "playwright install chromium"
   },
   "devDependencies": {
     "@playwright/test": "1.55.0",
