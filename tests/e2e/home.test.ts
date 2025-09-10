@@ -122,11 +122,6 @@ test.describe('City Search', () => {
     const newTab = tabsRoot.getByRole('tab', { name: /Boston/i });
     await expect(newTab).toBeVisible();
 
-    const isSelected = await newTab.getAttribute('aria-selected');
-    if (isSelected !== 'true') {
-      await newTab.click();
-    }
-
     const weatherReq = await weatherRequestPromise;
     expect(decodeURIComponent(weatherReq.url())).toMatch(/q=Boston/i);
   });

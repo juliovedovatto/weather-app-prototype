@@ -5,6 +5,7 @@ import { defineConfigWithVueTs, vueTsConfigs } from '@vue/eslint-config-typescri
 import eslintConfigPrettier from 'eslint-config-prettier/flat';
 import betterTailwindCSSPlugin from 'eslint-plugin-better-tailwindcss';
 import importPlugin from 'eslint-plugin-import';
+import playwright from 'eslint-plugin-playwright';
 import eslintPluginVue from 'eslint-plugin-vue';
 import globals from 'globals';
 import typescriptEslint from 'typescript-eslint';
@@ -88,6 +89,16 @@ export default defineConfigWithVueTs([
       'better-tailwindcss': {
         entryPoint: fileURLToPath(new URL('./src/styles.css', import.meta.url)),
       },
+    },
+  },
+  {
+    files: ['tests/e2e/**/*.test.ts'],
+    plugins: { playwright },
+    ...playwright.configs['flat/recommended'],
+    rules: {
+      ...playwright.configs['flat/recommended'].rules,
+      // custom tweaks if needed
+      'playwright/no-skipped-test': 'error',
     },
   },
 ]);
