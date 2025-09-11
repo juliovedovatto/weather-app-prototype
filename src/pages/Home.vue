@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue';
+import { computed, ref, watchEffect } from 'vue';
+import { useRoute } from 'vue-router';
 
 import type { TabItem } from '@/models/app';
 
@@ -10,7 +11,9 @@ import { CITY_TABS } from '@/config';
 
 defineOptions({ name: 'HomePage' });
 
-const selectedCity = ref(CITY_TABS[0]?.name ?? '');
+const route = useRoute();
+
+const selectedCity = ref('');
 const dynamicCities = ref<TabItem[]>([]);
 
 const availableCities = computed<TabItem[]>(() => {
@@ -21,6 +24,12 @@ const availableCities = computed<TabItem[]>(() => {
   return items;
 });
 
+const location = computed(() => (route.params.query as string) || '');
+
+watchEffect(() => {
+  selectedCity.value = location.value || CITY_TABS[0]?.name || '';
+});
+
 function onCityAdded(name: string) {
   if (dynamicCities.value.some((c) => c.name === name) || CITY_TABS.some((c) => c.name === name)) {
     return;
@@ -28,19 +37,12 @@ function onCityAdded(name: string) {
   dynamicCities.value.push({ name, label: name });
   selectedCity.value = name;
 }
-
-function onTabSelected(city: string) {
-  if (selectedCity.value === city) {
-    return;
-  }
-  selectedCity.value = city;
-}
 </script>
 
 <template>
   <div class="flex flex-col gap-12" data-test="home-page">
     <!-- City Tabs -->
-    <CityTabs :items="availableCities" @tab-selected="onTabSelected" />
+    <CityTabs :items="availableCities" />
 
     <!-- Weather Forecast -->
     <WeatherForecast :city="selectedCity" />

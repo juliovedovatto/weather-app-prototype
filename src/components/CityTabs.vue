@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, watch, onBeforeMount } from 'vue';
+import { useRoute, RouterLink } from 'vue-router';
 
 import type { TabItem } from '@/models/app';
 
@@ -8,9 +9,9 @@ export interface CityTabsProps {
 }
 
 const props = defineProps<CityTabsProps>();
-const emit = defineEmits<{ tabSelected: [city: string] }>();
 
 const selectedItem = ref('');
+const route = useRoute();
 
 watch(
   () => props.items,
@@ -19,16 +20,31 @@ watch(
       selectedItem.value = '';
       return;
     }
+    // Prefer route query if present
+    const routeCity = typeof route.query.city === 'string' ? route.query.city : null;
+    if (routeCity && value.some((i) => i.name === routeCity)) {
+      selectedItem.value = routeCity;
+      return;
+    }
     const selected = value.find((i) => i.selected);
     if (selected && selected.name !== selectedItem.value) {
       selectedItem.value = selected.name;
-      emit('tabSelected', selectedItem.value);
     } else if (!value.some((i) => i.name === selectedItem.value)) {
       const first = value[0];
       if (first) {
         selectedItem.value = first.name;
-        emit('tabSelected', selectedItem.value);
       }
+    }
+  },
+  { immediate: true },
+);
+
+// Watch route query location changes
+watch(
+  () => route.params.query,
+  (location) => {
+    if (typeof location === 'string' && location && location !== selectedItem.value) {
+      selectedItem.value = location;
     }
   },
 );
@@ -37,16 +53,13 @@ function isSelectedItem(item: TabItem) {
   return item.name === selectedItem.value;
 }
 
-function onSelect(item: TabItem) {
-  if (isSelectedItem(item)) {
-    return;
-  }
-  selectedItem.value = item.name;
-  emit('tabSelected', item.name);
-}
-
 onBeforeMount(() => {
-  selectedItem.value = props.items.find((i) => i.selected)?.name ?? props.items[0]?.name ?? '';
+  const routeLocation = typeof route.params.query === 'string' ? route.params.query : '';
+  selectedItem.value =
+    (routeLocation && props.items.find((i) => i.name === routeLocation)?.name) ||
+    props.items.find((i) => i.selected)?.name ||
+    props.items[0]?.name ||
+    '';
 });
 </script>
 
@@ -57,16 +70,16 @@ onBeforeMount(() => {
     role="tablist"
     class="-mx-4 flex gap-2 overflow-x-auto px-4 py-2 whitespace-nowrap sm:mx-0 sm:overflow-visible sm:px-0"
   >
-    <button
+    <RouterLink
       v-for="item in props.items"
       :key="item.name"
+      :to="{ name: 'location', params: { query: item.name } }"
       role="tab"
       :aria-selected="isSelectedItem(item)"
-      class="cursor-pointer rounded-tab bg-white px-6 py-2 text-[18px] leading-tight font-semibold text-wx-navy-900 transition-colors hover:bg-wx-sky-100 focus:ring-2 focus:ring-wx-sky-50 focus:outline-none aria-selected:bg-wx-sky-100"
-      :class="isSelectedItem(item) ? 'bg-wx-sky-100 ring-1 ring-black/5' : 'ring-0'"
-      @click="onSelect(item)"
+      class="cursor-pointer rounded-tab px-6 py-2 text-[18px] leading-tight font-semibold text-wx-navy-900 transition-colors hover:bg-wx-sky-100 focus:ring-2 focus:ring-wx-sky-50 focus:outline-none"
+      :class="isSelectedItem(item) ? 'bg-wx-sky-100 ring-1 ring-black/5' : 'bg-white ring-0'"
     >
       {{ item.label }}
-    </button>
+    </RouterLink>
   </nav>
 </template>

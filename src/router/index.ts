@@ -7,6 +7,11 @@ const routes: RouteRecordRaw[] = [
     name: 'home',
     component: () => import('@/pages/Home.vue'),
   },
+  {
+    path: '/:query',
+    name: 'location',
+    component: () => import('@/pages/Home.vue'),
+  },
 ];
 
 const router = createRouter({
