@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect } from 'vue';
-import { useRoute } from 'vue-router';
+import { computed, onBeforeMount, ref, watchEffect } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 
 import type { TabItem } from '@/models/app';
 
@@ -11,6 +11,7 @@ import { CITY_TABS } from '@/config';
 
 defineOptions({ name: 'HomePage' });
 
+const router = useRouter();
 const route = useRoute();
 
 const selectedCity = ref('');
@@ -36,7 +37,15 @@ function onCityAdded(name: string) {
   }
   dynamicCities.value.push({ name, label: name });
   selectedCity.value = name;
+
+  router.push({ name: 'location', params: { query: name } });
 }
+
+onBeforeMount(() => {
+  if (location.value) {
+    router.push({ name: 'home' });
+  }
+});
 </script>
 
 <template>
