@@ -5,7 +5,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'home',
-    component: () => import('@/App.vue'), // Temporary: replace with a dedicated Home view later
+    component: () => import('@/pages/Home.vue'),
   },
 ];
 

@@ -1,36 +1,9 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue';
 
-import { CITY_TABS } from './config';
-import { useLocationForecastQuery, type LocationForecastFilters } from './queries/forecast.query';
-
-import type { TabItem } from './models/app';
-import type { WeatherCondition, ForecastHour } from '@/models/weather';
-
-import CityTabs from '@/components/CityTabs.vue';
-import CurrentWeatherCard from '@/components/CurrentWeatherCard.vue';
-import ForecastCardsRow from '@/components/ForecastCardsRow.vue';
-import HourlyTimeline from '@/components/HourlyTimeline.vue';
-import CitySearch from '@/components/search/CitySearch.vue';
 import UserName from '@/components/UserName.vue';
 
-const selectedCity = ref(CITY_TABS[0]?.name ?? '');
-
-// Editable user name state
 const userName = ref('');
-
-const availableCities = computed<TabItem[]>(() => {
-  const items = [...CITY_TABS, ...dynamicCities.value];
-
-  items.forEach((item) => {
-    item.selected = item.name === selectedCity.value;
-  });
-
-  return items;
-});
-
-// Dynamic added cities
-const dynamicCities = ref<TabItem[]>([]);
 
 const greeting = computed(() => {
   const hour = new Date().getHours();
@@ -59,102 +32,6 @@ const greeting = computed(() => {
   }
   return { message, emoji };
 });
-
-const locationForecastFilters = computed<LocationForecastFilters>(() => ({ q: selectedCity.value, days: 5 }));
-
-const locationForecastQuery = useLocationForecastQuery({
-  filters: locationForecastFilters,
-  throwOnError: false,
-});
-
-const isForecastLoading = computed(
-  () => locationForecastQuery.isFetching.value || locationForecastQuery.isLoading.value,
-);
-
-const forecastError = computed(() => {
-  if (!locationForecastQuery.isError.value) {
-    return null;
-  }
-
-  const err = locationForecastQuery.error.value as unknown;
-  if (
-    typeof err === 'object' &&
-    err &&
-    'message' in err &&
-    typeof (err as { message?: unknown }).message === 'string'
-  ) {
-    return (err as { message: string }).message;
-  }
-
-  return 'Failed to load forecast data. Please try again.';
-});
-
-const currentLocationCondition = computed<WeatherCondition | null>(() => {
-  if (locationForecastQuery.isFetching.value || locationForecastQuery.isError.value) {
-    return null;
-  }
-  const data = locationForecastQuery.data.value;
-  if (!data) {
-    return null;
-  }
-  return { condition: data.current.condition, temperature: data.current.temp_c };
-});
-
-const forecastDayConditions = computed<WeatherCondition[]>(() => {
-  if (locationForecastQuery.isFetching.value || locationForecastQuery.isError.value) {
-    return [];
-  }
-  return (
-    locationForecastQuery.data.value?.forecast.forecastday.map((d) => ({
-      condition: d.day.condition,
-      temperature: d.day.avgtemp_c,
-    })) ?? []
-  );
-});
-
-const currentLocation = computed(() => {
-  if (locationForecastQuery.isFetching.value || locationForecastQuery.isError.value) {
-    return null;
-  }
-  return locationForecastQuery.data.value?.location ?? null;
-});
-
-const hourlyConditions = computed<ForecastHour[]>(() => {
-  if (locationForecastQuery.isFetching.value || locationForecastQuery.isError.value) {
-    return [];
-  }
-
-  const data = locationForecastQuery.data.value;
-  if (!data || !currentLocation.value) {
-    return [];
-  }
-
-  const todayHours = data.forecast.forecastday[0]?.hour ?? [];
-  const nextDayHours = data.forecast.forecastday[1]?.hour ?? [];
-  const hours = [...todayHours, ...nextDayHours];
-
-  return hours;
-});
-
-function onCityAdded(name: string) {
-  if (dynamicCities.value.some((c) => c.name === name) || CITY_TABS.some((c) => c.name === name)) {
-    return;
-  }
-
-  dynamicCities.value.push({ name, label: name });
-  selectedCity.value = name;
-}
-
-function onRetryForecast() {
-  locationForecastQuery.refetch();
-}
-
-function onTabSelected(city: string) {
-  if (selectedCity.value === city) {
-    return;
-  }
-  selectedCity.value = city;
-}
 </script>
 
 <template>
@@ -166,37 +43,6 @@ function onTabSelected(city: string) {
       <span>{{ greeting.emoji }}</span>
     </h1>
 
-    <!-- City Tabs -->
-    <CityTabs :items="availableCities" @tab-selected="onTabSelected" />
-
-    <template v-if="forecastError">
-      <div class="flex items-start gap-4 rounded-md border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-        <span class="flex-1">{{ forecastError }}</span>
-        <button type="button" class="shrink-0 font-medium underline hover:text-red-900" @click="onRetryForecast">
-          Retry
-        </button>
-      </div>
-    </template>
-
-    <section class="flex flex-col gap-8 md:grid md:grid-cols-[260px_1fr] md:gap-x-7 md:gap-y-0">
-      <!-- Current Weather Large Card -->
-      <CurrentWeatherCard
-        :location="currentLocation"
-        :condition="currentLocationCondition"
-        :loading="isForecastLoading"
-        :location-name="selectedCity"
-      />
-
-      <div class="flex h-full flex-col gap-8 sm:justify-between sm:gap-0">
-        <!-- Hourly timeline -->
-        <HourlyTimeline :conditions="hourlyConditions" :location="currentLocation" :loading="isForecastLoading" />
-
-        <!-- Forecast Cards Row -->
-        <ForecastCardsRow :conditions="forecastDayConditions" :loading="isForecastLoading" />
-      </div>
-    </section>
-
-    <!-- City Search -->
-    <CitySearch @city-added="onCityAdded" />
+    <RouterView />
   </main>
 </template>
